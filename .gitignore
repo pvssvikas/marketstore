@@ -4,6 +4,8 @@
 /vendor/
 **/*.swp
 .idea/
+.vscode/
+contrib/gdfeeder/processed/*.csv
 /data/
 /tmp/
 *.pyc

@@ -9,20 +9,22 @@ void rewriteBuffer(char *buffer, int VarRecLen, int numVarRecords, char *newBuff
 	int nbCursor=0;
 	uint32_t *ticks;
 	epochTimeStruct ept;
-	for (int j = 0; j < numVarRecords; j++) {
+	int j = 0;
+	int ii =0;
+	for (j = 0; j < numVarRecords; j++) {
              ticks = (uint32_t *)(buffer+(VarRecLen-4));
 	 	// Expand ticks (32-bit) into epoch and nanos (96-bits)
 	 	getTimeFromTicks(intervalStartEpoch, intervals, *ticks, &ept);
 		//printf("Epoch2 = %ld\n",epoch);
-	 	for (int ii = 0; ii < 8; ii++) {
+	 	for (ii = 0; ii < 8; ii++) {
 	 		newBuffer[nbCursor+ii] = *((char *)(&(ept.epoch)) + ii);
 	 	}
 	 	nbCursor += 8;
-	 	for (int ii = 0; ii < VarRecLen-4; ii++) {
+	 	for (ii = 0; ii < VarRecLen-4; ii++) {
 	 		newBuffer[nbCursor+ii] = buffer[ii];
 	 	}
 	 	nbCursor += VarRecLen - 4;
-	 	for (int ii = 0; ii < 4; ii++) {
+	 	for (ii = 0; ii < 4; ii++) {
 	 		newBuffer[nbCursor+ii] = *((char *)(&(ept.nanos)) + ii);
 	 	}
 	 	nbCursor += 4;
