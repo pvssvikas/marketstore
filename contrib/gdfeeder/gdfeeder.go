@@ -116,15 +116,17 @@ func getFetchTime(givenTime string) time.Time {
 	return timeToFetch
 }
 
-func getSleepDuration(nextExpected time.Time) time.Duration {
-
-	fmt.Println("fetchTime calculated is ", nextExpected)
+func getSleepDuration(gd *GdFetcher) time.Duration {
 
 	now := time.Now()
+	nextExpected := gd.fetchTime
+
 	duration := nextExpected.Sub(now)
 
 	if duration < time.Second {
 		nextExpected = nextExpected.Add(time.Duration(1) * time.Hour * 24)
+		gd.fetchTime = nextExpected
+
 		duration = nextExpected.Sub(now)
 	}
 
@@ -142,7 +144,7 @@ func (gd *GdFetcher) Run() {
 	// This Method runs for ever
 	for {
 		gdfCSVReader(getNSE50Symbols())
-		time.Sleep(getSleepDuration(gd.fetchTime))
+		time.Sleep(getSleepDuration(gd))
 	}
 }
 
@@ -338,6 +340,8 @@ func gdfCSVReader(symbols []string) {
 		csvFile.Close()
 		defer os.Rename(f.Name, processedFile)
 	}
+
+	time.Sleep(60)
 }
 
 func appendPrice(record []string, prices []HistoricRate) []HistoricRate {
